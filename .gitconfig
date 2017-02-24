@@ -1,0 +1,59 @@
+[user]
+	name = Sergiy Marchuk
+	mail = sergiym@
+	email = sergiym@
+[core]
+        preloadindex = true
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  interactive = auto
+  ui = true
+  pager = true
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[difftool]
+	prompt = true
+[diff]
+    tool = meld
+[merge]
+	tool = meld
+
+[mergetool "sublimerge"]
+	cmd = /auto/app/sublime_text_3_el6_x64/sublime_text -n --wait \"$REMOTE\" \"$BASE\" \"$LOCAL\" \"$MERGED\" --command \"sublimerge_diff_views\"
+	trustExitCode = false
+[mergetool "vsdiff"]
+    cmd = /auto/app/slickedit16/bin/vsdiff \"$LOCAL\" \"$REMOTE\"	
+[difftool "sublimerge"]
+	cmd = /auto/app/sublime_text_3_el6_x64/sublime_text -n --wait \"$REMOTE\" \"$LOCAL\" --command \"sublimerge_diff_views {\\\"left_read_only\\\": true, \\\"right_read_only\\\": true}\"
+[difftool "bc"]
+	cmd = /auto/app/beyondcompare-4.1_x64/bin/bcompare \"$LOCAL\" \"$REMOTE\"
+[difftool "vsdiff"]
+    cmd = /auto/app/slickedit16/bin/vsdiff \"$LOCAL\" \"$REMOTE\"
+
+[alias]
+  co = checkout
+  ci = commit
+  st = status -uno
+  br = branch
+  ct = checkout
+  lg = log --oneline --decorate --graph 
+  hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short 
+  last = log --name-status HEAD^..HEAD 
+  su = submodule update
+  sstatus = submodule status
