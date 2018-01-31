@@ -1,12 +1,21 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
 PATH=$HOME/bin:$HOME/usr/bin:$PATH
 
 export EDITOR=vim
+alias dtk='/.autodirect/rdmzsysgwork/$USER/git/sx_fit_regression/devtk/dev-tk.py'
 
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
       *) return;;
 esac
+
+if [ -f /auto/sw_system_project/devops/common/bashrc ]; then
+    . /auto/sw_system_project/devops/common/bashrc
+fi
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -47,17 +56,19 @@ esac
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+        # We have color support; assume it's compliant with Ecma-48
+        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+        # a case would tend to support setf rather than setaf.)
+        color_prompt=yes
     else
-	color_prompt=
+        color_prompt=
     fi
 fi
 
 if [ "$color_prompt" = yes ]; then
+    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     PS1='\[\e[1;35m\][\[\e[0m\]\[\e[1;32m\]\D{%d/%m %H:%M} \[\e[1;36m\]\u\[\e[0m\]\[\e[1;35m\]@\[\e[0m\]\[\e[1;33m\]\h\[\e[0m\] \[\e[1;34m\]\W\[\e[0m\]\[\e[1;35m\]]\$\[\e[0m\] '
+    #PS1="\[\033[38;5;5m\][\[$(tput sgr0)\]\[\033[38;5;2m\]\A\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;6m\]\u\[$(tput sgr0)\]\[\033[38;5;5m\]@\[$(tput sgr0)\]\[\033[38;5;3m\]\h\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;4m\]\W\[$(tput sgr0)\]\[\033[38;5;5m\]]\[$(tput sgr0)\]"
 else
     source ~/.bash_colors
     # get current branch in git repo
@@ -107,8 +118,8 @@ else
         fi
     }
 
+    #PS1="\[\e[35m\][\[\e[m\]\[\e[32m\]\A\[\e[m\] \[\e[36m\]\u\[\e[m\]\[\e[35m\]@\[\e[m\]\[\e[33m\]\h\[\e[m\] \[\e[32m\]\`parse_git_branch\`\[\e[m\] \[\e[34m\]\W\[\e[m\]\[\e[35m\]]\[\e[m\] "
     PS1="\[$Purple\][\[$Green\]\A \[$Cyan\]\u\[$Purple\]@\[$Yellow\]\h \[$Blue\]\W\[$Purple\]]\$\[$Color_Off\] "
-    #With GIT branch name
     #PS1="\[$Purple\][\[$Green\]\A \[$Cyan\]\u\[$Purple\]@\[$Yellow\]\h \[$Green\]`parse_git_branch` \[$Blue\]\W\[$Purple\]]\$\[$Color_Off\] "
 fi
 unset color_prompt force_color_prompt
@@ -168,6 +179,10 @@ if [ -f /etc/bash_completion.d/git ]; then
 fi
 
 PATH=$PATH:~/opt/bin
+export REGRESSION_BASE_DIR='/.autodirect/rdmzsysgwork/sergiym/git/'
+export TEST_SUITE_PATH='/.autodirect/rdmzsysgwork/mswg/projects/test_suite2/shlib'
+export HOSTNAME='vnc-aricent'
+export WD='/.autodirect/rdmzsysgwork/sergiym/git/'
 
 alias pygmentize='/labhome/sergiym/tools/Pygments-2.1.3/pygmentize'
 export LESS='-R'
@@ -178,7 +193,27 @@ export LESS+=' --RAW-CONTROL-CHARS'
 source ~/.git-completion.bash
 alias grep='GREP_COLOR="1;33;40" LANG=C grep --color=auto --line-number'
 
+alias make1='mlnx_make'
+alias make2='mlnx_make install'
+alias make3='mlnx_make release'
+alias make4='/labhome/sergiym/tools/make4.sh'
+alias make_all='make1 && make2 && make3 && make4'
+alias make_clean='sudo rm -rf /builds2/sergiym/git/tallmaple_reduced_temp/without-code-coverage/product-switchx-x86_64-x86_64'
+alias make_clean_ppc='sudo rm -rf /builds2/sergiym/git/tallmaple_reduced_temp/without-code-coverage/product-switchx-ppc-m460ex'
+alias make_inc='/labhome/sergiym/tools/make_inc.py'
+alias cdt='cd '$WD'tallmaple_reduced_temp/tree'
+alias cdts='cd '$WD'tallmaple_reduced_temp/tree ; source sx2_x86.sh'
+alias tree='/labhome/sergiym/tools/tree'
 alias add30seconds='sudo -E date +%T -s `date +%T --date="30 seconds"`'
+#alias tmux='/.autodirect/rdmzsysgwork/sergiym/tools/tmux/tmux'
+alias domlnxcp='/labhome/sergiym/tools/domlnxcp.sh'
+alias dosrccp='/labhome/sergiym/tools/dosrccp.sh'
+alias vsdiff='/auto/app/slickedit16/bin/vsdiff'
+alias tig='/.autodirect/rdmzsysgwork/sergiym/tools/tig-master/src/tig'
+beauty() { $REGRESSION_BASE_DIR/sx_fit_regression/devtk/processes.py beautify -fs `readlink --canonicalize $1`; }
+alias switch_reboot='/auto/sw_system_project/devops/bin/rreboot_wrapper.sh'
 
 # Git aliases
 alias lg='git log --oneline --decorate'
+alias git_su='cd '$WD'/tallmaple_reduced_temp ; git submodule update ; cd -'
+rpm_install() { rpm2cpio $2 | ssh root@$1 'cd /;cpio -idmv' ; }
