@@ -1,0 +1,148 @@
+# build sources
+	sudo -E make
+	sudo -E make install
+	sudo -E make release
+
+# Build servers
+	10.224.13.252
+	10.224.13.81
+
+# load img to sevice
+	image fetch scp://sergiym@10.224.13.252: + path to .img file
+	image install + image name
+	configure terminal
+	image boot next
+	reload
+
+# Clear config
+	configuration new sm factory keep-basic
+	configuration switch-to sm
+
+	reset factory keep-basic
+
+#Clear log
+	logging files delete <current|oldest>
+
+# Object files
+build dir:
+	install/image/opt/tms/lib/
+	build/image/lib/
+on device:
+	/opt/tms/lib/
+
+# Log location on device
+	/var/log/messages
+	/var/opt/tms/snapshots/.running/metad/pdtrc.log
+
+# Incremental image update
+	TARGET_HOST=10.224.23.23 sudo -E tools/domlnxcp.sh -u
+
+# Upload sources to switch for GDB
+	TARGET_HOST=10.224.23.23 tools/dosrccp.sh
+
+# Run tests
+	tools/cli_tester.py -env_file customer/switchx/src/unittests/env_Piranha.txt -tests_file customer/switchx/src/unittests/eth_unittests/test_lab.xml -dut_ip 10.224.23.23 -target_systype Piranha
+
+# Turn-off reboot on error
+	no boot next fallback-reboot enable
+
+# Commit Steps
+	export TEST_SUITE_PATH='/.autodirect/rdmzsysgwork/mswg/projects/test_suite2/shlib'
+	alias dtk='/.autodirect/rdmzsysgwork/sergiym/git/sx_fit_regression/devtk/dev-tk.py'
+	dtk
+	Processes:
+		Files -> Select files, check "Beautify" and "Coverity"
+		Build serever -> 
+		Switches -> Add Switch -> "Show Running config", "Verify Log"
+		Compilation -> With(out) Code Coverage -> X86
+		Run
+	Commit:
+		Check "Eth Protocols" checkbox
+		Enter commit message
+		Select reviewer
+		Run
+	"Run Commit?" window:
+		Yes
+
+
+# Open coverage file
+	COVFILE=/tmp/sergiym/cov_10_224_23_26//bullseye.cov /.autodirect/app/bullseye/bin/CoverageBrowser
+
+# TM Internal commads
+	from CLI (config mode): 
+		internal action|event|pattern|query get|iterate|...
+
+
+#testx
+	from shell: testx_start.sh
+	SwitchX-SDK connect
+	Router
+
+
+#api_tester
+	sx
+	init open
+	fdb dumpMc 0 1 01:00:5e:3:3:3 17
+	vlan show ports 0 1
+	dump counters 0x13f00 4 0
+	du phy 1 0
+	vlan urmc getmode 0 10
+	du ro UCipv4 0 40.40.40.0 255.255.255.0
+
+#valgrind
+	$WD/sx_fit_regression/libs/scripts/valgrind_test.py --ip 10.224.22.177 --daemons_list arpd
+
+	$WD/sx_fit_regression/libs/scripts/valgrind_test.py --ip 10.224.22.26 --stop_valgrind YES
+
+	sx_fit_regression/libs/scripts/valgrind_test.py --ip 1.1.1.1 --profile eth --results_path /sysgwork/nio --collect_results YES
+
+	./valgrind --leak-check=full /opt/tms/bin/metad.bin &> vg3.out
+
+
+#dont reboor when restart metad
+	internal set modify - /pg/config/20_eth_sys/daemon/66/restart_action value string none
+	no pm process metad liveness enable
+
+#dont reboor when restart iss
+	internal set modify - /pg/config/20_eth_sys/daemon/52/restart_action value string none
+	no pm process iss0 liveness enable
+
+	/.autodirect/rdmzsysgwork/nazarg/metaswitch/tree/tools/cli_tester.py -tests_file /rdmzsysgwork/sergiym/git/tallmaple_reduced_temp/tree/customer/switchx/src/unittests/eth_unittests/test_storm_control.xml -dut_ip 10.224.13.218 -target_systype Panther -feature_tags storm_control
+
+#recover connection to switch
+	ifconfig mgmts0 10.224.13.218 netmask 255.255.255.0
+	route add default gw 10.224.13.254
+	/usr/sbin/sshd
+
+#mount own dir to switch
+	mount -o remount,rw /
+	mount -o nolock,ro 10.224.13.81:/builds2 /builds2
+	mount -o nolock,ro rdmzfs:/vol/labhome/sergiym /labhome/sergiym
+	mount -o nolock,ro rdmzfs:/vol/rdmzsysgwork /net/rdmzfs/vol/rdmzsysgwork
+	mkdir -p /builds2
+	mkdir -p /labhome/${DIR_USER}
+	mkdir -p /net/rdmzfs/vol/rdmzsysgwork
+
+
+#Restart VNC with new resolution
+	/usr/bin/Xvnc-core :92 -auth /labhome/marianp/.Xauthority -pn -fp built-ins -geometry 1920x1080
+
+	$ ssh user@my_vnc_server
+	echo "1854x1052" > ~/.vnc/vnc_geometry
+	/auto/GLIT/SCRIPTS/VNC/user_vnc_ctl stop; /auto/GLIT/SCRIPTS/VNC/user_vnc_ctl start
+
+#GDB prety struct print
+	set print pretty on
+
+
+#install packet to the switch
+
+	wget ftp://rpmfind.net/linux/centos/6.8/os/x86_64/Packages/gdb-7.2-90.el6.x86_64.rpm
+	rpm2cpio gdb-7.2-90.el6.x86_64.rpm | ssh root@10.224.23.89 "cd /;cpio -idmv"
+
+#Configure speed on Linux host 
+	ethtool -s eth1 speed 40000 duplex full autoneg off
+
+# add spellchecker exeption 
+	add_aspell_exception word
+
